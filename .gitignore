@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Secrets & Environment Configurations
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+frontend/.env.staging
+
+# Next.js Build Output
+.next/
+frontend/.next/
+out/
+build/
+dist/
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+
+# Python Caches & Compiled Files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+backend/.pytest_cache/
+backend/app/__pycache__/
+backend/app/api/__pycache__/
+backend/app/api/endpoints/__pycache__/
+backend/app/core/__pycache__/
+backend/app/services/__pycache__/
+backend/tests/__pycache__/
+
+# Local Test Audio Files & Diagnostics
+backend/tests/dummy.wav
+backend/tests/create_dummy_wav.py
+backend/check_ai_provider.py
+
+# IDE Folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
