@@ -8,7 +8,6 @@ from ..core.config import settings
 
 class SpeechTranscriberService:
     def __init__(self):
-        # Retrieve keys and config from settings or environment
         self.openai_key = settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY", "")
         self.gemini_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
         self.gemini_model = settings.GEMINI_MODEL
@@ -30,11 +29,11 @@ class SpeechTranscriberService:
         """
         Transcribes audio data directly from memory, bypassing disk writes.
         """
-        # 1. Gemini Multimodal Audio Transcription Pathway
+        # Gemini Multimodal Audio Transcription Pathway
         if self.gemini_key:
             return self._transcribe_gemini_bytes(audio_data, filename)
 
-        # 2. OpenAI Whisper Ingestion Pathway
+        # OpenAI Whisper Ingestion Pathway
         if not self.client:
             raise ValueError("OpenAI API Key is not configured. Please set the OPENAI_API_KEY environment variable.")
         

@@ -65,17 +65,14 @@ export default function CallerPage() {
   const [status, setStatus] = useState<"idle" | "recording" | "transcribing" | "preview" | "processing" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
   
-  // Geolocation states
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
   const [gpsSource, setGpsSource] = useState<"browser" | "caller_described" | "unknown">("unknown");
   
-  // Ingest states
   const [textFallback, setTextFallback] = useState("");
   const [manualLocation, setManualLocation] = useState("");
   const [showTextFallback, setShowTextFallback] = useState(false);
   
-  // Audio recording states
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -88,7 +85,6 @@ export default function CallerPage() {
   const recordingStopCallTimeRef = useRef<number>(0);
   const [renderStartTime, setRenderStartTime] = useState<number | null>(null);
   
-  // Progress tracker state
   const [progressStage, setProgressStage] = useState<"idle" | "received" | "transcribing" | "extracting" | "computing" | "broadcasting" | "sent">("idle");
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -129,7 +125,6 @@ export default function CallerPage() {
     }
   };
 
-  // Ingestion Response Results
   const [result, setResult] = useState<{
     transcript: string;
     severity: string;
@@ -148,7 +143,6 @@ export default function CallerPage() {
       }
     }
     
-    // Auto-request browser GPS geolocation
     requestGeolocation();
   }, []);
 
@@ -180,7 +174,6 @@ export default function CallerPage() {
     }
   };
 
-  // Audio Recording Controls
   const startRecording = async () => {
     audioChunksRef.current = [];
     setRecordingSeconds(0);
@@ -211,7 +204,6 @@ export default function CallerPage() {
         const generatedBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         setAudioBlob(generatedBlob);
         
-        // Stop all track media streams
         stream.getTracks().forEach(track => track.stop());
         
         const recDuration = recordingStopCallTimeRef.current - recordingStartTimeRef.current;
@@ -261,7 +253,6 @@ export default function CallerPage() {
     }
   };
 
-  // Transcribes the audio locally without finalizing/broadcasting yet
   const transcribeOnly = async (blob: Blob) => {
     setStatus("transcribing");
     startProgressAnimation();
@@ -317,7 +308,6 @@ export default function CallerPage() {
     }
   };
  
-  // Finalizes the emergency report sending trigger
   const handleFinalSend = () => {
     setStatus("processing");
     setTimeout(() => {
@@ -619,6 +609,11 @@ export default function CallerPage() {
           </Link>
         </div>
       </div>
+      <footer className="text-center mt-6 select-none animate-fade-in">
+        <p className="text-[10px] font-mono font-bold text-zinc-700 tracking-widest uppercase">
+          LifeSaver.ai v1.0 • Hackathon MVP
+        </p>
+      </footer>
     </div>
   );
 }

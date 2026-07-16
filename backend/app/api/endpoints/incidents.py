@@ -1,4 +1,3 @@
-import os
 import uuid
 import datetime
 import time
@@ -31,7 +30,6 @@ async def run_websocket_broadcast(message: dict):
     print(f"[Telemetry] WebSocket Broadcast: {broadcast_elapsed} ms")
 
 async def broadcast_progress(incident_id: str, stage: str, message: str):
-    """Broadcast progress stage event over websocket connection."""
     try:
         await manager.broadcast({
             "event": "INCIDENT_PROGRESS",
@@ -71,8 +69,7 @@ async def report_incident(
     """
     total_start = time.perf_counter()
     now = datetime.datetime.now(datetime.timezone.utc)
-    
-    # 1. Validation check
+
     if not audio and not text_fallback:
         raise HTTPException(status_code=400, detail="Missing emergency voice or text input")
 
@@ -88,14 +85,12 @@ async def report_incident(
     caller_transcript = ""
     detected_lang_str = language_code or "en"
 
-    # 2. Ingest Voice (if audio uploaded)
     if audio and incidentMode == "voice":
         try:
             await broadcast_progress(incident_id, "transcribing", "Transcribing Voice...")
             asr_start = time.perf_counter()
             content = await audio.read()
             
-            # Transcribe via SpeechTranscriber (fully in-memory bytes)
             asr_result = asr_service.transcribe_bytes(content, filename=audio.filename)
             caller_transcript = asr_result["transcript"]
             detected_lang_str = asr_result["language"]
@@ -113,30 +108,25 @@ async def report_incident(
             else:
                 raise HTTPException(status_code=500, detail=f"ASR Transcribe Error: {e}")
     else:
-        # Direct Text Input Ingestion
         caller_transcript = text_fallback or ""
         incidentMode = "text"
 
-    # Parse detected language code
     try:
         lang_enum = Language(detected_lang_str)
     except ValueError:
         lang_enum = Language.ENGLISH
 
-    # 3. Parse Emergency Context with Graceful Degradation
+    # Parse Emergency Context with Graceful Degradation
     try:
         await broadcast_progress(incident_id, "extracting", "Extracting Emergency Facts...")
-        # Call LLM Parser (it prints its own detailed telemetry)
         parsed_context, parser_time_ms = parser_service.parse_transcript(caller_transcript)
         
-        # Run pipeline validator step
         validated_context = EmergencyContextValidator.validate_and_sanitize(parsed_context)
         
         extracted_facts = validated_context.structured_facts
         extracted_type = validated_context.incident_type
         extracted_victim_count = validated_context.victim_count
 
-        # Run deterministic severity calculation
         await broadcast_progress(incident_id, "computing", "Computing Severity...")
         severity_start = time.perf_counter()
         severity_result = evaluate_incident_severity(extracted_facts, extracted_victim_count)
@@ -153,22 +143,20 @@ async def report_incident(
         import traceback
         traceback.print_exc()
         
-        extracted_facts = StructuredFacts()  # Empty flags (default false)
-        extracted_type = IncidentType.MEDICAL # Safety default
+        extracted_facts = StructuredFacts()
+        extracted_type = IncidentType.MEDICAL
         extracted_victim_count = 1
         
-        # Safe default severity for unparsed incidents
         severity_enum = Severity.URGENT
         severity_score = 15
         severity_reason = f"Raw Transcript Mode: AI parser bypassed due to timeout/error: {type(e).__name__}."
         parser_time_ms = 0
 
-    # 4. Construct GPS Details
+    # Construct GPS Details
     gps_lat = latitude
     gps_lng = longitude
     gps_src = "browser" if (latitude is not None and longitude is not None) else "unknown"
 
-    # 5. Formulate Timeline & Metrics
     total_processing_ms = int((time.perf_counter() - total_start) * 1000)
     
     mock_timeline = [
@@ -199,11 +187,10 @@ async def report_incident(
         timeline=mock_timeline
     )
 
-    # 6. Cache immediately (in-memory deque append is very cheap)
+    # Cache immediately
     incident_json = incident.model_dump(mode='json')
     incidents_cache.appendleft(incident_json)
     
-    # 7. Offload WebSocket broadcast to a FastAPI background task to return HTTP immediately
     await broadcast_progress(incident_id, "broadcasting", "Alerting Responders...")
     background_tasks.add_task(
         run_websocket_broadcast,

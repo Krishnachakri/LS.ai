@@ -482,6 +482,11 @@ export default function DashboardPage() {
         </div>
       </main>
 
+      <footer className="w-full text-center border-t border-zinc-900/60 py-5 select-none">
+        <p className="text-[10px] font-mono font-bold text-zinc-700 tracking-widest uppercase">
+          LifeSaver.ai v1.0 • Hackathon MVP
+        </p>
+      </footer>
     </div>
   );
 }
