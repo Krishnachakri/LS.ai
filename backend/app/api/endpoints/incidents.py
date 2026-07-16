@@ -2,8 +2,8 @@ import os
 import uuid
 import datetime
 import time
-import tempfile
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
+from fastapi.responses import JSONResponse
 from typing import Optional
 
 from ...schemas import Incident, GPS, StructuredFacts, Metrics, TimelineEvent, IncidentMode, Language, IncidentType, Severity
@@ -20,6 +20,31 @@ router = APIRouter()
 asr_service = SpeechTranscriberService()
 parser_service = EmergencyContextParser()
 
+async def run_websocket_broadcast(message: dict):
+    """Asynchronous background wrapper to execute and measure WebSocket broadcasting."""
+    broadcast_start = time.perf_counter()
+    try:
+        await manager.broadcast(message)
+    except Exception as e:
+        print(f"[Telemetry] WebSocket Broadcast failed: {e}")
+    broadcast_elapsed = int((time.perf_counter() - broadcast_start) * 1000)
+    print(f"[Telemetry] WebSocket Broadcast: {broadcast_elapsed} ms")
+
+async def broadcast_progress(incident_id: str, stage: str, message: str):
+    """Broadcast progress stage event over websocket connection."""
+    try:
+        await manager.broadcast({
+            "event": "INCIDENT_PROGRESS",
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "payload": {
+                "incidentId": incident_id,
+                "stage": stage,
+                "message": message
+            }
+        })
+    except Exception as e:
+        print(f"[Telemetry] Progress broadcast failed: {e}")
+
 @router.get("", response_model=list[Incident])
 def get_incidents():
     """
@@ -28,19 +53,21 @@ def get_incidents():
     """
     return list(incidents_cache)
 
-@router.post("/report", response_model=Incident)
+@router.post("/report")
 async def report_incident(
+    background_tasks: BackgroundTasks,
     audio: Optional[UploadFile] = File(None),
     text_fallback: Optional[str] = Form(None),
     latitude: Optional[float] = Form(None),
     longitude: Optional[float] = Form(None),
     language_code: Optional[str] = Form(None),
-    incidentMode: str = Form("voice")  # "voice" | "text"
+    incidentMode: str = Form("voice"),  # "voice" | "text"
+    incident_id: Optional[str] = Form(None)
 ):
     """
-    Ingests an emergency description (audio or text), transcribes it using Whisper,
-    extracts structured facts using the Emergency Context Parser, sanitizes data via the Validator,
-    calculates severity deterministically, and broadcasts it in real-time.
+    Ingests an emergency description (audio or text), transcribes it in-memory,
+    extracts structured facts, calculates severity, broadcasts to dispatch dashboard,
+    and logs precise performance metrics.
     """
     total_start = time.perf_counter()
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -49,7 +76,10 @@ async def report_incident(
     if not audio and not text_fallback:
         raise HTTPException(status_code=400, detail="Missing emergency voice or text input")
 
-    incident_id = str(uuid.uuid4())
+    if not incident_id:
+        incident_id = str(uuid.uuid4())
+        
+    await broadcast_progress(incident_id, "received", "Audio Received")
     
     # Initialize metric timers
     transcription_time_ms = 0
@@ -61,29 +91,20 @@ async def report_incident(
     # 2. Ingest Voice (if audio uploaded)
     if audio and incidentMode == "voice":
         try:
+            await broadcast_progress(incident_id, "transcribing", "Transcribing Voice...")
             asr_start = time.perf_counter()
+            content = await audio.read()
             
-            # Save UploadFile to a temporary file for processing
-            suffix = os.path.splitext(audio.filename)[1] if audio.filename else ".tmp"
-            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_audio:
-                content = await audio.read()
-                temp_audio.write(content)
-                temp_path = temp_audio.name
-
-            try:
-                # Transcribe via SpeechTranscriber
-                asr_result = asr_service.transcribe(temp_path)
-                caller_transcript = asr_result["transcript"]
-                detected_lang_str = asr_result["language"]
-            finally:
-                # Cleanup temp file
-                if os.path.exists(temp_path):
-                    os.remove(temp_path)
-                    
+            # Transcribe via SpeechTranscriber (fully in-memory bytes)
+            asr_result = asr_service.transcribe_bytes(content, filename=audio.filename)
+            caller_transcript = asr_result["transcript"]
+            detected_lang_str = asr_result["language"]
+            
             transcription_time_ms = int((time.perf_counter() - asr_start) * 1000)
             
         except Exception as e:
             # If ASR fails, fall back to text_fallback if provided, otherwise raise error
+            print(f"[!] ASR Ingestion pipeline failure: Type={type(e).__name__}, Error={str(e)}")
             import traceback
             traceback.print_exc()
             if text_fallback:
@@ -104,7 +125,8 @@ async def report_incident(
 
     # 3. Parse Emergency Context with Graceful Degradation
     try:
-        # Call LLM Parser
+        await broadcast_progress(incident_id, "extracting", "Extracting Emergency Facts...")
+        # Call LLM Parser (it prints its own detailed telemetry)
         parsed_context, parser_time_ms = parser_service.parse_transcript(caller_transcript)
         
         # Run pipeline validator step
@@ -115,7 +137,11 @@ async def report_incident(
         extracted_victim_count = validated_context.victim_count
 
         # Run deterministic severity calculation
+        await broadcast_progress(incident_id, "computing", "Computing Severity...")
+        severity_start = time.perf_counter()
         severity_result = evaluate_incident_severity(extracted_facts, extracted_victim_count)
+        severity_elapsed = int((time.perf_counter() - severity_start) * 1000)
+        print(f"[Telemetry] Severity Engine calculation: {severity_elapsed} ms")
         
         severity_enum = severity_result.severity
         severity_score = severity_result.score
@@ -123,6 +149,7 @@ async def report_incident(
 
     except (ParserException, Exception) as e:
         # --- GRACEFUL DEGRADATION: RAW TRANSCRIPT FALLBACK ---
+        print(f"[!] Context Parser pipeline failure: Type={type(e).__name__}, Error={str(e)}")
         import traceback
         traceback.print_exc()
         
@@ -133,7 +160,7 @@ async def report_incident(
         # Safe default severity for unparsed incidents
         severity_enum = Severity.URGENT
         severity_score = 15
-        severity_reason = "Raw Transcript Mode: AI parser bypassed due to service timeout/error."
+        severity_reason = f"Raw Transcript Mode: AI parser bypassed due to timeout/error: {type(e).__name__}."
         parser_time_ms = 0
 
     # 4. Construct GPS Details
@@ -172,14 +199,26 @@ async def report_incident(
         timeline=mock_timeline
     )
 
-    # 6. Cache and Broadcast in real-time
+    # 6. Cache immediately (in-memory deque append is very cheap)
     incident_json = incident.model_dump(mode='json')
     incidents_cache.appendleft(incident_json)
     
-    await manager.broadcast({
-        "event": "NEW_INCIDENT",
-        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "payload": incident_json
-    })
+    # 7. Offload WebSocket broadcast to a FastAPI background task to return HTTP immediately
+    await broadcast_progress(incident_id, "broadcasting", "Alerting Responders...")
+    background_tasks.add_task(
+        run_websocket_broadcast,
+        {
+            "event": "NEW_INCIDENT",
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "payload": incident_json
+        }
+    )
     
-    return incident
+    await broadcast_progress(incident_id, "sent", "Emergency Sent")
+    
+    total_time_ms = int((time.perf_counter() - total_start) * 1000)
+    print(f"[Telemetry] Total request processing: {total_time_ms} ms")
+    
+    # Return JSONResponse directly to avoid double validation/serialization of the model
+    return JSONResponse(content=incident_json)
+

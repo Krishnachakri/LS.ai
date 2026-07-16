@@ -61,14 +61,8 @@ class EmergencyContextParser:
             raise ParserUnavailable("Parser service temporarily unavailable.")
 
         system_prompt = (
-            "You are an Emergency Information Extraction System for LifeSaver.ai. "
-            "Your task is ONLY to convert caller descriptions into structured factual information. "
-            "Do NOT diagnose. "
-            "Do NOT recommend treatment. "
-            "Do NOT assume facts not present in the text. "
-            "If uncertain, leave the corresponding field false. "
-            "Your output must strictly follow the schema. "
-            "Never select 'Unknown' for incident category; default to 'Medical Emergency' if unclear."
+            "Extract emergency facts from the transcript. Do not assume facts. "
+            "Default incident_type to 'Medical Emergency' if unclear."
         )
 
         max_attempts = 2
@@ -113,17 +107,9 @@ class EmergencyContextParser:
         import httpx
         import json
         
-        start_time = time.perf_counter()
-        
         system_prompt = (
-            "You are an Emergency Information Extraction System for LifeSaver.ai. "
-            "Your task is ONLY to convert caller descriptions into structured factual information. "
-            "Do NOT diagnose. "
-            "Do NOT recommend treatment. "
-            "Do NOT assume facts not present in the text. "
-            "If uncertain, leave the corresponding field false. "
-            "Your output must strictly follow the schema. "
-            "Never select 'Unknown' for incident category; default to 'Medical Emergency' if unclear."
+            "Extract emergency facts from the transcript. Do not assume facts. "
+            "Default incident_type to 'Medical Emergency' if unclear."
         )
         
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={gemini_key}"
@@ -143,6 +129,7 @@ class EmergencyContextParser:
                 ]
             },
             "generationConfig": {
+                "temperature": 0.0,
                 "responseMimeType": "application/json",
                 "responseSchema": {
                     "type": "OBJECT",
@@ -180,11 +167,18 @@ class EmergencyContextParser:
         }
         
         headers = {"Content-Type": "application/json"}
+        
+        gemini_start = time.perf_counter()
         with httpx.Client(timeout=60.0) as client:
             response = client.post(url, json=payload, headers=headers)
+            gemini_elapsed = int((time.perf_counter() - gemini_start) * 1000)
+            
             if response.status_code != 200:
                 raise ParserUnavailable(f"Gemini API returned error {response.status_code}: {response.text}")
                 
+            print(f"[Telemetry] Gemini Parser Response Time: {gemini_elapsed} ms")
+            
+            parse_start = time.perf_counter()
             data = response.json()
             try:
                 text_out = data["candidates"][0]["content"]["parts"][0]["text"]
@@ -213,8 +207,11 @@ class EmergencyContextParser:
                     structured_facts=sf
                 )
                 
-                elapsed_ms = int((time.perf_counter() - start_time) * 1000)
-                return parsed_context, elapsed_ms
+                parse_elapsed = int((time.perf_counter() - parse_start) * 1000)
+                print(f"[Telemetry] Parser JSON Parsing & Schema Validation: {parse_elapsed} ms")
+                
+                return parsed_context, gemini_elapsed
             except Exception as e:
-                logger.error(f"Gemini parsing/validation failed: {e}. Raw: {text_out}")
+                logger.error(f"Gemini parsing/validation failed: {e}. Raw: {data}")
                 raise InvalidParserOutput("Invalid parser output format.")
+
