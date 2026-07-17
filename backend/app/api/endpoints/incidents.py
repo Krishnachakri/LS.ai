@@ -143,17 +143,21 @@ async def report_incident(
         import traceback
         traceback.print_exc()
         
-        extracted_facts = StructuredFacts()
-        extracted_type = IncidentType.MEDICAL
-        extracted_victim_count = 1
-        
-        severity_enum = Severity.URGENT
-        severity_score = 15
-        severity_reason = f"Raw Transcript Mode: AI parser bypassed due to timeout/error: {type(e).__name__}."
-        parser_time_ms = 0
-
-    # Construct GPS Details
-    gps_lat = latitude
+        report_lower = caller_transcript.lower()
+                keywords = ["fire", "smoke", "accident", "crash"]
+                if any(kw in report_lower for kw in keywords):
+                                severity = "high"
+                else:
+                                severity = "medium"
+                            return JSONResponse(
+                                            status_code=200,
+                                            content={
+                                                                "incident_severity": severity,
+                                                                "incident_type": "general",
+                                                                "incident_summary": caller_transcript
+                                            }
+                            )
+        gps_lat = latitude
     gps_lng = longitude
     gps_src = "browser" if (latitude is not None and longitude is not None) else "unknown"
 
