@@ -42,7 +42,7 @@ LifeSaver.ai is a **modern API-first intake wrapper** designed to sit in front o
 
 ```
 Panicked Caller (Speak Telugu/EN) 
-      ↓ (Whisper ASR Auto-Translation)
+      ↓ (Gemini Multimodal Audio API (ASR & Auto-Translation))
 English Transcript 
       ↓ (Gemini Structured Context Extraction)
 Structured Symptoms Checklist (JSON) 
@@ -98,7 +98,7 @@ Static frontend edge hosting via Vercel paired with a Dockerized FastAPI backend
 ![Deployment](./docs/assets/deployment_architecture.svg)
 
 ### 4. Emergency AI Parser Pipeline
-The dual-LLM structure (Whisper + Gemini) with active validation schemas and fallback loops.
+The unified AI parser structure (Gemini Multimodal Audio API + Gemini JSON parsing) with active validation schemas and fallback loops.
 ![AI Pipeline](./docs/assets/ai_pipeline.svg)
 
 ### 5. Severity Engine Logic Rubric
@@ -115,7 +115,7 @@ The socket handshake and real-time push broadcast stream.
 
 * **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, Vanilla CSS
 * **Backend:** FastAPI (Python 3.12), Uvicorn ASGI Server
-* **AI ASR:** OpenAI Whisper API (Multilingual Audio Transcription & Translation)
+* **AI ASR:** Google Gemini Multimodal Audio API (Transcription & Auto-Translation)
 * **AI Context Parser:** Google Gemini 3.5 Flash API (Structured JSON Schema generation)
 * **Realtime Protocol:** WebSocket Router (`/api/v1/incidents/live`)
 * **State Management:** In-memory queue cache (handles last 20 active incidents for live display)
@@ -133,7 +133,7 @@ d:\LS.ai
 │   │   │   └── router.py   # Mount point for endpoints
 │   │   ├── core            # Configuration settings and global variables
 │   │   ├── schemas         # Pydantic schemas (symptoms, facts, incidents)
-│   │   └── services        # AI Services (Whisper ASR, Gemini JSON parser)
+│   │   └── services        # AI Services (Audio ASR Service, Gemini JSON parser)
 │   ├── tests               # Unit tests (pytest suites for Severity Engine)
 │   ├── requirements.txt    # Python package dependencies
 │   └── Dockerfile          # Production backend Docker image
@@ -146,8 +146,7 @@ d:\LS.ai
 ├── docs
 │   ├── assets              # High-quality SVG diagrams and screenshots
 │   ├── pitch_guide.md      # 2-minute, 3-minute, and 5-minute presentation scripts
-│   ├── judge_qa.md         # Defensible responses to judge questions
-│   └── submission_documents.md # Copy-paste template drafts for submission forms
+│   └── judge_qa.md         # Defensible responses to judge questions
 ├── LICENSE                 # MIT License file
 └── README.md               # Main repository showcase documentation
 ```
@@ -166,7 +165,7 @@ Create a `.env` file in the `backend/` directory:
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-3.5-flash
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here # Optional fallback transcription key
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 ```
 
@@ -203,7 +202,7 @@ Open [http://localhost:3000/caller](http://localhost:3000/caller) for the Caller
 
 ## 🔮 Future Roadmap
 
-1. **Fully Offline Operation:** Compile Whisper.cpp and a quantized local LLM (like Llama-3-8B-Instruct via Llama.cpp) to run directly on the dispatcher's local edge server, allowing triage to continue during total internet blackouts.
+1. **Fully Offline Operation:** Compile local on-device ASR models (like Whisper.cpp or Gemini Nano) and a quantized local LLM (like Llama-3-8B-Instruct via Llama.cpp) to run directly on the dispatcher's local edge server, allowing triage to continue during total internet blackouts.
 2. **IoT Distress Ingestion:** Sync directly with smartwatch health sensors (sudden drop in heart rate) and vehicle impact sensors to automatically trigger silent emergency dispatches.
 3. **Telemetry Dashboard Enhancements:** Connect responder maps to live traffic datasets (like Google Maps API) to compute optimal route times for ambulance dispatch.
 

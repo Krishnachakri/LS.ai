@@ -21,7 +21,7 @@ This guide outlines the elevator pitch, structured pitch scripts (2-minute, 3-mi
   * *Speaker:* "LifeSaver.ai is a startup-grade emergency intake layer that turns panicked, unstructured audio into structured response intelligence instantly. Our system combines dual-LLM pipelines with a deterministic medical rule engine to automate transcription, translation, symptom mapping, and routing in real-time."
 * **0:50 - 1:40: The Live Demo**
   * *Speaker:* "Let's look at the live deployment. A caller opens the Caller Portal on their phone and reports an incident in Telugu: *'నాకు చాతి నొప్పిగా ఉంది, శ్వాస తీసుకోవడం కష్టంగా ఉంది'* (I have chest pain, breathing is difficult). 
-  * Instantly, our OpenAI Whisper pipeline detects the language, transcribes, and translates the text. Next, our Google Gemini context parser maps symptoms against a strict JSON schema. The Python Severity Engine detects a cardiac indicator alongside breathing difficulty, automatically triggers a critical override, and computes a maximum severity score of 100.
+  * Instantly, our Google Gemini Multimodal Audio pipeline detects the language, transcribes, and translates the text. Next, our Google Gemini context parser maps symptoms against a strict JSON schema. The Python Severity Engine detects a cardiac indicator alongside breathing difficulty, automatically triggers a critical override, and computes a maximum severity score of 100.
   * Within **5.6 seconds** of voice submission (or **1.1 seconds** for text fallback), a critical emergency card flashes on the Responder Dashboard via WebSockets, playing an alert sound and showing the exact symptom checklist and GPS location to dispatch crews."
 * **1:40 - 2:00: Market Fit, Future & Closing**
   * *Speaker:* "LifeSaver.ai is fully live, secure, and operates with zero database dependencies for instant edge deployment. In the future, we plan on-device offline models and integration with telemetry sensors. LifeSaver.ai—intelligent intake, deterministic triage, saving lives when seconds count."
@@ -39,7 +39,7 @@ This guide outlines the elevator pitch, structured pitch scripts (2-minute, 3-mi
 | **1:05-1:45** | Focus on `/dashboard`. Real-time incident card slides in with red flashing glow. Alert chime plays. | Click the newly generated critical incident card. Highlight the structured facts checklist on the right. | "Within 5.6 seconds, the first responder dashboard chimes. The dispatcher sees a unified card: language detected, 100 severity score, GPS link, and a structured check of chest pain and breathing issues." |
 | **1:45-2:20** | Back to `/caller`. Disallow microphone permission to trigger fallback. Text fallback input is revealed. Enter text: *"Car crash near main gate, two people bleeding."* Click Send. | Turn off browser mic permissions, enter description in text box, and click Send. | "If voice fails or connectivity drops, the portal instantly degrades gracefully to offline-ready text mode. The client uses keyword-based heuristics to ensure triage continues." |
 | **2:20-2:45** | Dashboard view. Show the new "Urgent" card created with score 45, GPS labeled as "caller_described". | Point cursor to the metrics section showing latency time (~1.1 seconds). | "The dashboard receives the new incident immediately. We display precise telemetry: latency is measured (~1.1 seconds for text), and GPS coordinates are tagged to browser location." |
-| **2:45-3:00** | Final slide: Tech stack (FastAPI, Next.js, Gemini, Whisper) and future roadmap. | None. | "Fully live, deterministic, and modular. LifeSaver.ai is the future of emergency dispatch. Thank you." |
+| **2:45-3:00** | Final slide: Tech stack (FastAPI, Next.js, Gemini) and future roadmap. | None. | "Fully live, deterministic, and modular. LifeSaver.ai is the future of emergency dispatch. Thank you." |
 
 ---
 
@@ -51,7 +51,7 @@ This guide outlines the elevator pitch, structured pitch scripts (2-minute, 3-mi
 * **1:00 - 2:00: Technical Innovation & Architecture**
   * "LifeSaver.ai is built on a decoupled, high-performance architecture. The frontend is built using Next.js and Tailwind CSS for instant rendering and responsiveness. The backend uses FastAPI, a high-performance Python framework, running Uvicorn to handle concurrent connections. 
   * The heart of the system is our **Dual-Stage AI Pipeline**:
-    1. **Stage 1 (ASR):** OpenAI's Whisper model transcribes and translates incoming audio. This allows callers to speak in their native tongue (e.g., Telugu) while automatically providing English translations to dispatchers.
+    1. **Stage 1 (ASR):** Google's Gemini Multimodal Audio API transcribes and translates incoming audio. This allows callers to speak in their native tongue (e.g., Telugu) while automatically providing English translations to dispatchers.
     2. **Stage 2 (Structured Parsing):** Instead of letting an LLM write conversational text, we feed the translation to Google's Gemini 3.5 Flash using a strict JSON schema. This ensures the output matches a strict Pydantic symptom structure containing booleans like `unconsciousness` or `breathing_difficulty`."
 * **2:00 - 3:00: Deterministic Severity Rubric & Failsafe**
   * "Why did we not let Gemini output the severity label directly? Because LLMs are non-deterministic. A slight variance in phrasing could shift a heart attack from 'Critical' to 'Standard'. 
@@ -61,6 +61,6 @@ This guide outlines the elevator pitch, structured pitch scripts (2-minute, 3-mi
 * **4:15 - 5:00: Security, Scalability, & Road Ahead**
   * "Because the application holds zero database dependencies, it stores state in-memory, making it lightweight and deployable directly on edge servers. For security, we pass all API calls through server-side environment variables, ensuring no client-side key leaks. 
   * Our roadmap includes:
-    1. **On-Device ASR/LLM:** Compiling Whisper.cpp and Llama.cpp to run offline, ensuring triage works even during cellular tower failures.
+    1. **On-Device ASR/LLM:** Compiling local on-device ASR models (like Whisper.cpp or Gemini Nano) and Llama.cpp to run offline, ensuring triage works even during cellular tower failures.
     2. **IoT Integration:** Automatically ingesting crash data from vehicle sensors and heart rate drops from smartwatches.
   * LifeSaver.ai is ready to scale, ready to deploy, and ready to save lives. Thank you."
