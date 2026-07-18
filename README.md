@@ -144,9 +144,7 @@ d:\LS.ai
 │   │   └── page.tsx        # Unified landing page
 │   └── package.json        # NPM dependencies
 ├── docs
-│   ├── assets              # High-quality SVG diagrams and screenshots
-│   ├── pitch_guide.md      # 2-minute, 3-minute, and 5-minute presentation scripts
-│   └── judge_qa.md         # Defensible responses to judge questions
+│   └── assets              # High-quality SVG diagrams and screenshots
 ├── LICENSE                 # MIT License file
 └── README.md               # Main repository showcase documentation
 ```
