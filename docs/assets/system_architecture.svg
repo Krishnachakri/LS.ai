@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+    
+    <!-- Component Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    
+    <!-- Dropshadow filter -->
+    <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0284c7" flood-opacity="0.25"/>
+    </filter>
+    <filter id="redGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#e11d48" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="650" rx="16" fill="url(#bgGrad)" />
+  <rect width="1000" height="650" rx="16" fill="none" stroke="#1f2937" stroke-width="2" />
+
+  <!-- Title -->
+  <text x="50" y="50" fill="#f9fafb" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="bold" letter-spacing="-0.5">LifeSaver.ai — Unified System Architecture</text>
+  <text x="50" y="75" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="14">Intake orchestration, deterministic severity triage, and real-time dashboard updates</text>
+
+  <!-- ==================== FRONTEND LAYER ==================== -->
+  <g transform="translate(50, 130)">
+    <rect width="240" height="470" rx="12" fill="#1f2937" fill-opacity="0.4" stroke="#374151" stroke-width="1.5" />
+    <text x="20" y="30" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="1">CLIENT INTERFACES</text>
+    
+    <!-- Caller UI -->
+    <g transform="translate(20, 60)" filter="url(#glow)">
+      <rect width="200" height="160" rx="8" fill="url(#blueGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">Caller Portal</text>
+      <text x="20" y="50" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="12">Next.js Mobile-First UI</text>
+      <rect x="20" y="70" width="160" height="1" fill="#bae6fd" opacity="0.3" />
+      <text x="20" y="90" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ Multilingual Audio Mic</text>
+      <text x="20" y="110" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ Interactive Text Box</text>
+      <text x="20" y="130" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ GPS Location Tracking</text>
+    </g>
+
+    <!-- Responder Dashboard -->
+    <g transform="translate(20, 260)" filter="url(#glow)">
+      <rect width="200" height="180" rx="8" fill="url(#blueGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">Responder Dashboard</text>
+      <text x="20" y="50" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="12">Next.js Live Monitor</text>
+      <rect x="20" y="70" width="160" height="1" fill="#bae6fd" opacity="0.3" />
+      <text x="20" y="90" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ WS Real-Time Stream</text>
+      <text x="20" y="110" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ Interactive Incident Cards</text>
+      <text x="20" y="130" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ Symptoms Checklist</text>
+      <text x="20" y="150" fill="#e0f2fe" font-family="Inter, system-ui, sans-serif" font-size="11">✓ Performance Metrics</text>
+    </g>
+  </g>
+
+  <!-- ==================== BACKEND ORCHESTRATION LAYER ==================== -->
+  <g transform="translate(370, 130)">
+    <rect width="260" height="470" rx="12" fill="#1f2937" fill-opacity="0.4" stroke="#374151" stroke-width="1.5" />
+    <text x="20" y="30" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="1">FASTAPI CORE BACKEND</text>
+
+    <!-- FastAPI Router -->
+    <g transform="translate(20, 60)" filter="url(#glow)">
+      <rect width="220" height="110" rx="8" fill="url(#greenGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">API Intake Router</text>
+      <text x="20" y="50" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="12">POST /api/v1/incidents/report</text>
+      <rect x="20" y="65" width="180" height="1" fill="#a7f3d0" opacity="0.3" />
+      <text x="20" y="85" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="11">Rest API + Wave uploads</text>
+    </g>
+
+    <!-- Severity Engine -->
+    <g transform="translate(20, 195)" filter="url(#redGlow)">
+      <rect width="220" height="120" rx="8" fill="url(#redGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">Severity Triage Engine</text>
+      <text x="20" y="50" fill="#ffe4e6" font-family="Inter, system-ui, sans-serif" font-size="12">Rule-Based Classifier</text>
+      <rect x="20" y="70" width="180" height="1" fill="#fecdd3" opacity="0.3" />
+      <text x="20" y="90" fill="#ffe4e6" font-family="Inter, system-ui, sans-serif" font-size="11">Deterministic Rubric</text>
+      <text x="20" y="105" fill="#ffe4e6" font-family="Inter, system-ui, sans-serif" font-size="11">Critical Overrides</text>
+    </g>
+
+    <!-- WebSocket Server -->
+    <g transform="translate(20, 340)" filter="url(#glow)">
+      <rect width="220" height="100" rx="8" fill="url(#purpleGrad)" />
+      <text x="20" y="35" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">WebSocket Hub</text>
+      <text x="20" y="55" fill="#f3e8ff" font-family="Inter, system-ui, sans-serif" font-size="12">In-Memory Connection Hub</text>
+      <text x="20" y="80" fill="#f3e8ff" font-family="Inter, system-ui, sans-serif" font-size="11">Real-time incident broadcasts</text>
+    </g>
+  </g>
+
+  <!-- ==================== EXTERNAL AI LAYER ==================== -->
+  <g transform="translate(710, 130)">
+    <rect width="240" height="470" rx="12" fill="#1f2937" fill-opacity="0.4" stroke="#374151" stroke-width="1.5" />
+    <text x="20" y="30" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="1">EXTERNAL AI LAYER</text>
+
+    <!-- Whisper API -->
+    <g transform="translate(20, 80)" filter="url(#glow)">
+      <rect width="200" height="110" rx="8" fill="url(#purpleGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">OpenAI Whisper</text>
+      <text x="20" y="50" fill="#f3e8ff" font-family="Inter, system-ui, sans-serif" font-size="12">Multilingual ASR</text>
+      <rect x="20" y="65" width="160" height="1" fill="#d8b4fe" opacity="0.3" />
+      <text x="20" y="85" fill="#f3e8ff" font-family="Inter, system-ui, sans-serif" font-size="11">Detects and transcribes</text>
+    </g>
+
+    <!-- Gemini API -->
+    <g transform="translate(20, 240)" filter="url(#glow)">
+      <rect width="200" height="150" rx="8" fill="url(#yellowGrad)" />
+      <text x="20" y="30" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="bold">Google Gemini</text>
+      <text x="20" y="50" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="12">Structured Fact Parser</text>
+      <rect x="20" y="70" width="160" height="1" fill="#fde68a" opacity="0.3" />
+      <text x="20" y="90" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="11">Strict JSON Pydantic</text>
+      <text x="20" y="110" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="11">Symptom extraction</text>
+      <text x="20" y="130" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="11">Model: gemini-3.5-flash</text>
+    </g>
+  </g>
+
+  <!-- ==================== FLOW CONNECTORS (ARROWS) ==================== -->
+  
+  <!-- Caller Portal -> API Router (HTTP POST) -->
+  <path d="M 250 210 L 390 210" stroke="#38bdf8" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-dasharray="6,4" />
+  <text x="270" y="200" fill="#38bdf8" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold">HTTP POST</text>
+  
+  <!-- Router -> Whisper (Audio Transcription) -->
+  <path d="M 590 190 L 710 190" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow)" />
+  
+  <!-- Whisper -> Router (Transcript Response) -->
+  <path d="M 710 210 L 590 210" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="4,4" />
+  
+  <!-- Router -> Gemini (Transcript Fact Extraction) -->
+  <path d="M 590 240 L 710 320" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrow)" />
+  
+  <!-- Gemini -> Router (Structured JSON) -->
+  <path d="M 710 340 L 590 260" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="4,4" />
+  
+  <!-- Router -> Severity Engine (Deterministic Facts) -->
+  <path d="M 480 170 L 480 195" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+  
+  <!-- Severity Engine -> WebSocket Hub (Incident Broadcast) -->
+  <path d="M 480 315 L 480 340" stroke="#f43f5e" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+  
+  <!-- WebSocket Hub -> Dashboard (Real-time update) -->
+  <path d="M 370 410 L 250 410" stroke="#8b5cf6" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+  <text x="280" y="400" fill="#a78bfa" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="bold">WebSocket Stream</text>
+
+  <!-- Arrow Marker Definition -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+</svg>

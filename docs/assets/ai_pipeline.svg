@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 350" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+    
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="350" rx="16" fill="url(#bgGrad)" />
+  <rect width="1000" height="350" rx="16" fill="none" stroke="#1f2937" stroke-width="2" />
+
+  <!-- Title -->
+  <text x="50" y="45" fill="#f9fafb" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="bold" letter-spacing="-0.5">Emergency AI Parser Pipeline</text>
+  <text x="50" y="65" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="12">Structured symptom extraction and zero-config translation using dual-LLM pipeline</text>
+
+  <!-- Step 1: Multilingual Speech Input -->
+  <g transform="translate(50, 100)" filter="url(#shadow)">
+    <rect width="180" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+    <text x="15" y="30" fill="#38bdf8" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold">STEP 01</text>
+    <text x="15" y="55" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold">Multilingual ASR</text>
+    <text x="15" y="80" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">Voice input from caller.</text>
+    <text x="15" y="100" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">Audio recorded as</text>
+    <text x="15" y="120" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">standard WAV format.</text>
+    <text x="15" y="145" fill="#38bdf8" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold">Languages: EN / TE</text>
+  </g>
+
+  <!-- Flow 1 -->
+  <path d="M 230 190 L 270 190" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Step 2: OpenAI Whisper Transcription -->
+  <g transform="translate(270, 100)" filter="url(#shadow)">
+    <rect width="200" height="180" rx="8" fill="#1e293b" stroke="#c084fc" stroke-width="1.5" />
+    <text x="15" y="30" fill="#c084fc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold">STEP 02 (WHISPER)</text>
+    <text x="15" y="55" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold">Whisper Translate</text>
+    <text x="15" y="80" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">Raw audio parsed and</text>
+    <text x="15" y="98" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">translated to English.</text>
+    <text x="15" y="125" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Example: "నాకు గుండెనొప్పిగా ఉంది"</text>
+    <text x="15" y="140" fill="#a78bfa" font-family="Inter, system-ui, sans-serif" font-size="10">→ "I have chest pain"</text>
+  </g>
+
+  <!-- Flow 2 -->
+  <path d="M 470 190 L 510 190" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Step 3: Google Gemini Fact Extraction -->
+  <g transform="translate(510, 100)" filter="url(#shadow)">
+    <rect width="200" height="180" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
+    <text x="15" y="30" fill="#34d399" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold">STEP 03 (GEMINI)</text>
+    <text x="15" y="55" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold">JSON Fact Parser</text>
+    <text x="15" y="80" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">Model: gemini-3.5-flash</text>
+    <text x="15" y="98" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">Uses Strict responseSchema</text>
+    <text x="15" y="120" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">extracting boolean symptom</text>
+    <text x="15" y="138" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">flags &amp; incident types.</text>
+  </g>
+
+  <!-- Flow 3 -->
+  <path d="M 710 190 L 750 190" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Step 4: Graceful Degradation Engine -->
+  <g transform="translate(750, 100)" filter="url(#shadow)">
+    <rect width="200" height="180" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5" />
+    <text x="15" y="30" fill="#f43f5e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="bold">STEP 04 (FAILSAFE)</text>
+    <text x="15" y="55" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="bold">Graceful Fallback</text>
+    <text x="15" y="80" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">If API fails or key is missing,</text>
+    <text x="15" y="98" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">bypasses structured JSON,</text>
+    <text x="15" y="120" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">returns Raw Transcript,</text>
+    <text x="15" y="138" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="11">sets safety priority 'Urgent'.</text>
+  </g>
+
+  <!-- Arrow Marker Definition -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569" />
+    </marker>
+  </defs>
+</svg>
