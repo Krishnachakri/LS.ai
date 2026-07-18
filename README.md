@@ -1,6 +1,8 @@
 # 🚑 LifeSaver.ai (LS.ai)
 ### *Intelligent Emergency Intake. Deterministic Severity Triage. Saving Lives when Seconds Count.*
 
+**LifeSaver.ai is an AI-powered emergency intelligence platform that transforms unstructured emergency reports into structured, prioritized incident cards, enabling responders to understand situations faster and coordinate more effectively.**
+
 [![Vercel Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=flat-square&logo=vercel)](https://ls-ai-six.vercel.app)
 [![Render Deployment](https://img.shields.io/badge/Backend-Render-darkblue?style=flat-square&logo=render)](https://ls-ailifesaver-backend.onrender.com/health)
 [![API Version](https://img.shields.io/badge/API-v1.0.0-emerald?style=flat-square)](https://ls-ailifesaver-backend.onrender.com/docs)
@@ -14,6 +16,7 @@
 * **Live Responder Dashboard:** [https://ls-ai-six.vercel.app/dashboard](https://ls-ai-six.vercel.app/dashboard)
 * **API Documentation (Swagger):** [https://ls-ailifesaver-backend.onrender.com/docs](https://ls-ailifesaver-backend.onrender.com/docs)
 * **Backend Health Check:** [https://ls-ailifesaver-backend.onrender.com/health](https://ls-ailifesaver-backend.onrender.com/health)
+* **Deployment Details:** No installation required. Accessible from any modern web browser. Frontend and backend are publicly deployed.
 
 ---
 
@@ -47,14 +50,12 @@ Structured Symptoms Checklist (JSON)
 Live Responder Dashboard (Alert chimes + Real-Time Card)
 ```
 
----
-
 ## 📦 Key Product Features
 
-* **🎙️ Zero-Config Multilingual Ingestion:** The caller speaks in their native language (such as Telugu). The pipeline automatically transcribes and translates the audio into English.
+* **🎙️ Zero-Config Multilingual Ingestion:** The caller speaks in their native language (such as Telugu). The pipeline transcribes and auto-translates the audio into English (validated multilingual voice input using English and Telugu during testing).
 * **🧠 Structured AI Context Parsing:**Google's `gemini-3.5-flash` model extracts precise symptom checklists using a strict JSON response schema matching our Pydantic data model.
 * **🛡️ Deterministic Severity Classifier:** We decouple AI translation from medical classification. A custom Python rules engine maps symptom weights and applies critical overrides (e.g., Unconsciousness + Breathing issues = Critical, Score 100), ensuring triage decisions are 100% reproducible and explainable.
-* **⚡ Live WebSocket Stream:** Transcripts and computed severity models are pushed to the Responder Dashboard via persistent WebSockets in **1.1 seconds**.
+* **⚡ Live WebSocket Stream:** Transcripts and computed severity models are pushed to the Responder Dashboard via WebSockets (latency &lt; 50 ms after backend processing).
 * **🔌 Graceful Degradation / Failsafe:** If mic permissions are denied or external AI APIs timeout, the Caller Portal seamlessly falls back to text manual entry and Raw Transcript mode, ensuring intake never crashes.
 
 ---
@@ -62,9 +63,9 @@ Live Responder Dashboard (Alert chimes + Real-Time Card)
 ## 📊 Live System Status & Telemetry
 
 Our real-time production verification confirms the following speed metrics:
-* **Audio Ingest + Transcription + Fact Extraction + Severity + WebSocket Broadcast:** **~1.1 seconds**
-* **Server-Side Engine Latency:** **~519 ms**
-* **WebSocket Ingest Rendering Latency:** **&lt; 50 ms**
+* **Text Incident Pipeline:** **~1.1 seconds** (Text → Dashboard)
+* **Voice Incident Pipeline:** **~5.6 seconds** (Speech → ASR → AI Parsing → Dashboard)
+* **WebSocket Broadcast:** **&lt; 50 ms** after backend processing
 
 ---
 

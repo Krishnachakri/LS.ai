@@ -27,10 +27,10 @@ Legacy dispatch centers are unequipped to handle structured context extraction, 
 LifeSaver.ai is an intelligent emergency intake and dispatch orchestration wrapper. It operates as a web-accessible portal that callers can load instantly on any mobile device, alongside a real-time monitoring dashboard for dispatchers.
 
 Key Features:
-1. Multilingual Audio Intake: The caller holds a button and speaks naturally in their native language (e.g., Telugu). Our OpenAI Whisper pipeline transcribes and auto-translates the audio to English in under a second.
+1. Multilingual Audio Intake: The caller holds a button and speaks naturally in their native language (validated using English and Telugu during testing). Our OpenAI Whisper pipeline transcribes and auto-translates the audio to English.
 2. Structured LLM Parsing: The translated narrative is parsed by Google's Gemini 3.5 Flash API using strict JSON schemas to extract a Pydantic symptoms checklist (e.g., severe bleeding, breathing issues).
 3. Deterministic Severity Classification: The symptoms are passed to a Python Severity Engine that runs mathematical point rubrics and critical rule overrides (e.g., unconsciousness + breathing issues = Critical) rather than relying on non-deterministic LLM output.
-4. Real-time Live Stream: Using persistent WebSocket connections, the incident is broadcasted to the Responder Dashboard in 1.1 seconds, sliding in as a color-coded alert card with the structured symptoms, GPS location, and automatic timeline.
+4. Real-time Live Stream: Using persistent WebSocket connections, the incident is broadcasted to the Responder Dashboard (latency < 50ms after backend processing; ~1.1s for text and ~5.6s for voice pipelines).
 5. Failsafe Fallbacks: The system degrades gracefully to offline-ready text fallback inputs if microphone permissions are denied or if external AI APIs experience outages.
 ```
 
@@ -71,7 +71,7 @@ LifeSaver.ai uses a high-performance, asynchronous tech stack:
 **Character Count / Guide:** Quantified societal impact, scalability, and target outcome.
 
 ```text
-Emergency dispatch centers currently average 3 to 5 minutes to fully intake, classify, and route an incident. LifeSaver.ai reduces this intake-to-dispatch latency to just 1.1 seconds—a speedup of over 95%.
+Emergency dispatch centers currently average 3 to 5 minutes to fully intake, classify, and route an incident. LifeSaver.ai reduces this intake-to-dispatch latency to just ~1.1 seconds for text and ~5.6 seconds for voice pipelines.
 
 By structuring symptom checklists and enforcing deterministic overrides immediately, LifeSaver.ai removes cognitive load from dispatchers, eliminates transcription errors, and ensures that life-threatening cases (like cardiac arrests or severe vehicle collisions) are prioritized instantly. 
 
